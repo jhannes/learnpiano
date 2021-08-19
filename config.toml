@@ -1,4 +1,4 @@
-baseURL = '/'
+baseURL = 'https://jhannes.github.io/learnpiano/'
 languageCode = 'en-us'
 title = 'Learn Piano'
 theme = "portfolio"

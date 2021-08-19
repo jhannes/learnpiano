@@ -18,7 +18,7 @@
             align-items: flex-start;
         }
     </style>
-    <script src="/abcjs-basic.js" type="text/javascript"></script>
+    <script src='{{ "abcjs-basic.js" | relURL }}' type="text/javascript"></script>
     <script type="text/javascript">
         var abc = "T: {{.Title}}\n" + {{.Param "notes"}};
         
