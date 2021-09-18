@@ -7,17 +7,6 @@
 
     <title>{{.Title}}</title>
 
-    <style>
-        main {
-            max-width: 770px;
-            margin: 0 auto;
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-    </style>
     <script src='{{ "abcjs-basic.js" | relURL }}' type="text/javascript"></script>
     <script type="text/javascript">
         var abc = "T: {{.Title}}\n" + {{.Param "notes"}};
@@ -30,7 +19,13 @@
             // First draw the music - this supplies an object that has a lot of information about how to create the synth.
             // NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
             var visualObj = ABCJS.renderAbc("paper", abc, {
-                responsive: "resize", clickListener
+                responsive: "resize", clickListener, staffwidth: window.innerWidth  ,
+                oneSvgPerLine: true,
+                wrap: {
+                    minSpacing: 0.5,
+                    maxSpacing: 20,
+                    preferredMeasuresPerLine: 10
+                }
             })[0];
 
             // This object is the class that will contain the buffer
@@ -97,15 +92,11 @@
 </head>
 <body onload="load()">
 <main>
-    <div class="container">
-        <div id="paper"></div>
-        <div class="row">
-            <div>
-                <button class="activate-audio">Play</button>
-                <button class="stop-audio" style="display:none;">Stop Audio</button>
-                <div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
-            </div>
-        </div>
+    <div id="paper"></div>
+    <div>
+        <button class="activate-audio">Play</button>
+        <button class="stop-audio" style="display:none;">Stop Audio</button>
+        <div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
     </div>
 </main>
 </body>
