@@ -7,20 +7,22 @@
 
     <title>{{.Title}}</title>
 
+    <link rel="stylesheet" href='{{ "abcjs-audio.css" | relURL }}'/>
+    <style>
+        .highlight {
+            fill: #0a9ecc;
+        }
+    </style>
     <script src='{{ "abcjs-basic.js" | relURL }}' type="text/javascript"></script>
     <script type="text/javascript">
-        var abc = "T: {{.Title}}\n" + {{.Param "notes"}};
-        
-        function clickListener(abcelem, tuneNumber, classes, analysis, drag, click) {
-            console.log(arguments);
-        }
-        var visualObj;
+        const abc = "T: {{.Title}}\n" + {{.Param "notes"}};
         
         function render() {
             // First draw the music - this supplies an object that has a lot of information about how to create the synth.
             // NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
-            visualObj = ABCJS.renderAbc("paper", abc, {
-                responsive: "resize", clickListener, staffwidth: window.innerWidth,
+            const visualObj = ABCJS.renderAbc("paper", abc, {
+                responsive: "resize",
+                staffwidth: window.innerWidth,
                 oneSvgPerLine: true,
                 wrap: {
                     minSpacing: 0.5,
@@ -28,81 +30,35 @@
                     preferredMeasuresPerLine: 10
                 }
             })[0];
-        }
-        
-        function load() {
-            render();
 
-            // This object is the class that will contain the buffer
-            var midiBuffer;
-
-            var startAudioButton = document.querySelector(".activate-audio");
-            var stopAudioButton = document.querySelector(".stop-audio");
-
-            startAudioButton.addEventListener("click", function() {
-                startAudioButton.setAttribute("style", "display:none;");
-                if (ABCJS.synth.supportsAudio()) {
-                    stopAudioButton.setAttribute("style", "");
-
-                    // An audio context is needed - this can be passed in for two reasons:
-                    // 1) So that you can share this audio context with other elements on your page.
-                    // 2) So that you can create it during a user interaction so that the browser doesn't block the sound.
-                    // Setting this is optional - if you don't set an audioContext, then abcjs will create one.
-                    window.AudioContext = window.AudioContext ||
-                        window.webkitAudioContext ||
-                        navigator.mozAudioContext ||
-                        navigator.msAudioContext;
-                    var audioContext = new window.AudioContext();
-                    audioContext.resume().then(function () {
-
-                        // This does a bare minimum so this object could be created in advance, or whenever convenient.
-                        midiBuffer = new ABCJS.synth.CreateSynth();
-
-                        // midiBuffer.init preloads and caches all the notes needed. There may be significant network traffic here.
-                        return midiBuffer.init({
-                            visualObj: visualObj,
-                            audioContext: audioContext,
-                            millisecondsPerMeasure: visualObj.millisecondsPerMeasure()
-                        }).then(function (response) {
-                            // console.log(response); // this contains the list of notes that were loaded.
-                            // midiBuffer.prime actually builds the output buffer.
-                            return midiBuffer.prime();
-                        }).then(function () {
-                            // At this point, everything slow has happened. midiBuffer.start will return very quickly and will start playing very quickly without lag.
-                            midiBuffer.start();
-                            return Promise.resolve();
-                        }).catch(function (error) {
-                            if (error.status === "NotSupported") {
-                                stopAudioButton.setAttribute("style", "display:none;");
-                                var audioError = document.querySelector(".audio-error");
-                                audioError.setAttribute("style", "");
-                            } else
-                                console.warn("synth error", error);
-                        });
-                    });
-                } else {
-                    var audioError = document.querySelector(".audio-error");
-                    audioError.setAttribute("style", "");
+            const cursorControl = {
+                onEvent: function (event) {
+                    for (const element of document.querySelectorAll("#paper .highlight")) {
+                        element.classList.remove("highlight");
+                    }
+                    
+                    for (const note of event.elements) {
+                        for (const element of note) {
+                            element.classList.add("highlight");
+                        }
+                    }
                 }
-            });
+            };
 
-            stopAudioButton.addEventListener("click", function() {
-                startAudioButton.setAttribute("style", "");
-                stopAudioButton.setAttribute("style", "display:none;");
-                if (midiBuffer)
-                    midiBuffer.stop();
+            const synthControl = new ABCJS.synth.SynthController();
+            synthControl.load("#audio", cursorControl, {
+                displayRestart: true,
+                displayPlay: true,
+                displayProgress: true
             });
+            synthControl.setTune(visualObj, false);
         }
     </script>
 </head>
-<body onload="load()" onresize="render()">
+<body onload="render()" onresize="render()">
 <main>
+    <div id="audio"></div>
     <div id="paper"></div>
-    <div>
-        <button class="activate-audio">Play</button>
-        <button class="stop-audio" style="display:none;">Stop Audio</button>
-        <div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
-    </div>
 </main>
 </body>
 </html>
