@@ -18,8 +18,7 @@
   ],
   "start_url": "/learnpiano/",
   "scope": "/learnpiano/",
-  "display": "standalone",
-  "orientation": "portrait",
+  "display": "fullscreen",
   "background_color": "white",
   "theme_color": "white"
 }
