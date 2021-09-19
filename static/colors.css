@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A300%2C400%2C700%2C300italic%2C400italic%2C700italic%7CBitter%3A400%2C700&#038;subset=latin%2Clatin-ext');
+
+:root {
+    --main-color: white;
+    --text-color: black;
+    --accent: var(--text-color);
+    --menu-background: white;
+    --active-menu: rgb(188, 54, 10);
+}
+
+body {
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Bitter, Georgia, serif;
+}
+
+.site-header h2 {
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+}
+
+main {
+    background: var(--main-color);
+}
+
+main, a {
+    color: var(--text-color);
+}
+
+.menu-button {
+    background: var(--main-color);
+    border: 1px solid var(--accent);
+}
+
+.menu-button div {
+    background-color: var(--accent);
+}
+
+nav#narrow .menu, nav#narrow .menu a {
+    color: var(--text-color);
+    background-color: var(--menu-background);
+}
+
+nav#wide {
+    background-color: var(--menu-background);
+}
+
+nav#wide a.menu-item:hover {
+    background-color: var(--text-color);
+    color: var(--main-color);
+}
+
+nav#narrow .active {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+nav#wide .active {
+    color: var(--active-menu);
+    font-style: italic;
+    font-weight: normal;
+}
+
+nav#wide > * {
+    text-decoration: none;
+}
+

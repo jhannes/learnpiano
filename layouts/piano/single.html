@@ -1,21 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>{{.Title}}</title>
-
+    {{- partial "head.html" . -}}
     <link rel="stylesheet" href='{{ "abcjs-audio.css" | relURL }}'/>
     <style>
         .highlight {
             fill: #0a9ecc;
         }
+        main {
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            color: #f4f4f4;
+            background-color: #424242;
+        }
+        
+        header #audio {
+            flex: 1;
+        }
+        
+        nav#narrow {
+            display: flex;
+        }
+
+        .nav-menu .menu-button {
+            position: relative;
+            right: 0;
+            top: 0;
+            padding-bottom: 2px;
+            padding-left: 2px;
+            padding-right: 2px;
+            border-radius: 3px;
+        }
+
+        .nav-menu .menu-button div {
+            width: 20px;
+            height: 5px;
+            border-radius: 3px;
+            margin-top: 2px;
+        }
+
+        .nav-menu input:checked + .menu-button .menu-button-top {
+            margin-top: 10px;
+        }
+
+        .nav-menu input:checked + .menu-button .menu-button-middle {
+            margin-top: -5px;
+        }
+
+        .nav-menu .menu {
+            display: block;
+            padding: 2em;
+        }
     </style>
     <script src='{{ "abcjs-basic.js" | relURL }}' type="text/javascript"></script>
     <script type="text/javascript">
-        const abc = "T: {{.Title}}\n" + {{.Param "notes"}};
+        const abcSource = "T: {{.Title}}\n" + {{.Param "notes"}};
+        
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen').then(function(response) {
+                console.log("wakelock", response);
+            })
+        }
         
         function render() {
             function clickListener(abcelem) {
@@ -24,6 +74,9 @@
                 }
             }
             
+            const lyrics = document.querySelector("#lyrics").checked;
+            const abc = lyrics ? abcSource : abcSource.split("\n").filter(l => !l.startsWith("w:")).join("\n");
+
             // First draw the music - this supplies an object that has a lot of information about how to create the synth.
             // NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
             const visualObj = ABCJS.renderAbc("paper", abc, {
@@ -65,7 +118,27 @@
 </head>
 <body onload="render()" onresize="render()">
 <main>
-    <div id="audio"></div>
+    <header>
+        <div id="audio"></div>
+        <div><label><input id="lyrics" type="checkbox" onchange="render()"> Lyrics&nbsp;</label></div>
+        <nav id="narrow">
+            <label class="nav-menu">
+                <input type="checkbox" title="Menu" />
+                <div class="menu-button" aria-hidden="true"><div class="menu-button-top"></div><div class="menu-button-middle"></div><div class="menu-button-bottom"></div></div>
+                <div class="menu-wrapper">
+                    <div class="menu">
+                        <h1><a href='{{ "/" | relLangURL }}'>{{ .Site.Home.Title }}</a></h1>
+                        <h2><a href='{{ .Parent.Permalink }}'>{{ .Parent.Title }}</a></h2>
+                        <ul>
+                        {{ range .Parent.Pages.ByWeight.ByTitle }}
+                            <li><a href="{{.Permalink}}">{{.Title}}</a></li>
+                        {{ end }}
+                        </ul>
+                    </div>
+                </div>
+            </label>
+        </nav>
+    </header>
     <div id="paper"></div>
 </main>
 </body>
