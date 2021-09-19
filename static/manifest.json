@@ -1,0 +1,25 @@
+{
+  "name": "Learn Piano",
+  "short_name": "learnpiano",
+  "description": "Piano Songs with fingermarks",
+  "icons": [
+    {
+      "src": "icons/manifest-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/manifest-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "start_url": "/learnpiano/",
+  "scope": "/learnpiano/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "white",
+  "theme_color": "white"
+}

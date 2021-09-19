@@ -1,0 +1,22 @@
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>{{- .Title -}}&nbsp;-&nbsp;{{- .Site.Title -}}</title>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Questrial" />
+<link rel="stylesheet" href='{{ "style.css" | relURL }}'>
+<link rel="stylesheet" href='{{ "menu.css" | relURL }}'>
+<link rel="stylesheet" href='{{ "colors.css" | relURL }}'>
+<link rel="stylesheet" href='{{ "site.css" | relURL }}'>
+<link rel="shortcut icon" type="image/jpg" href='{{ "favicon.ico" | relURL }}' />
+<link rel="manifest" href='{{ "manifest.json" | relURL }}'>
+<link rel="apple-touch-icon" href='{{ "icons/apple-icon-180.png" | relURL }}'>
+<meta name="theme-color" content="#317EFB"/>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('{{ "sw.js" | relURL }}');
+        });
+    }
+</script>
+
